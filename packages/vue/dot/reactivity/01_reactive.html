@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>reactive</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script src="../../dist/vue.global.js"></script>
+  <script>
+    const { reactive, effect } = Vue
+    debugger;
+    const state = reactive({
+      name: 'jerry'
+    })
+    effect(() => {
+      app.innerHTML = state.name
+    })
+
+    debugger;
+    setTimeout(() => {
+      state.name = 'tom'
+    }, 2000);
+  </script>
+</body>
+
+</html>
