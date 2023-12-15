@@ -82,9 +82,11 @@ export type UnwrapNestedRefs<T> = T extends Ref ? T : UnwrapRefSimple<T>
 export function reactive<T extends object>(target: T): UnwrapNestedRefs<T>
 export function reactive(target: object) {
   // if trying to observe a readonly proxy, return the readonly version.
+  // 判断是否为一个只读的对象
   if (isReadonly(target)) {
     return target
   }
+  // 创建一个响应性的对象 -> Proxy
   return createReactiveObject(
     target,
     false,
@@ -252,6 +254,7 @@ function createReactiveObject(
   collectionHandlers: ProxyHandler<any>,
   proxyMap: WeakMap<Target, any>
 ) {
+  // 判断被代理对象是否为对象
   if (!isObject(target)) {
     if (__DEV__) {
       console.warn(`value cannot be made reactive: ${String(target)}`)
@@ -267,7 +270,9 @@ function createReactiveObject(
     return target
   }
   // target already has corresponding Proxy
+  // 从缓存中查看是否已经代理过
   const existingProxy = proxyMap.get(target)
+  // 如果存在，直接返回对应的代理对象
   if (existingProxy) {
     return existingProxy
   }
@@ -276,10 +281,12 @@ function createReactiveObject(
   if (targetType === TargetType.INVALID) {
     return target
   }
+  // 对被代理对象进行代理
   const proxy = new Proxy(
     target,
     targetType === TargetType.COLLECTION ? collectionHandlers : baseHandlers
   )
+  // 设置缓存 把被代理对象对应的代理对象进行缓存
   proxyMap.set(target, proxy)
   return proxy
 }
